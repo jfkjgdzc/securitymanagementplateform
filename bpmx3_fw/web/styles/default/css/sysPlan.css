@@ -1,0 +1,26 @@
+/*日历表头*/
+.fc-day-header{
+	height: 25px;
+	line-height: 25px;
+	font-size: 14px;
+	font-weight: bold;
+	background-color: highlight;
+}
+/*事件基础样式*/
+.event{
+	height: 25px ;
+	font-size: 14px;
+	line-height: 25px;
+}
+/*事件未开始样式*/
+.notstart{
+	background-color: silver;
+}
+/*事件正在执行样式*/
+.running{
+	background-color: green;
+}
+/*事件完成样式*/
+.finished{
+	background-color: orange;
+}

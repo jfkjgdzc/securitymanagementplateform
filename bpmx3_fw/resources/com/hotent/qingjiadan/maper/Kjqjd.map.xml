@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.hotent.qingjiadan.model.jfkjoa.Kjqjd">
+	<resultMap id="Kjqjd" type="com.hotent.qingjiadan.model.jfkjoa.Kjqjd">
+		<id property="id" column="ID" jdbcType="NUMERIC"/>
+		<result property="gsmc" column="F_GSMC" jdbcType="VARCHAR"/>
+		<result property="sqrq" column="F_SQRQ" jdbcType="DATE"/>
+		<result property="qjrxm" column="F_QJRXM" jdbcType="VARCHAR"/>
+		<result property="qjrxmID" column="F_QJRXMID" jdbcType="VARCHAR"/>
+		<result property="szbm" column="F_SZBM" jdbcType="VARCHAR"/>
+		<result property="szbmID" column="F_SZBMID" jdbcType="VARCHAR"/>
+		<result property="jb" column="F_JB" jdbcType="VARCHAR"/>
+		<result property="qjts" column="F_QJTS" jdbcType="NUMERIC"/>
+		<result property="rqq" column="F_RQQ" jdbcType="DATE"/>
+		<result property="rqz" column="F_RQZ" jdbcType="DATE"/>
+		<result property="bmzgjlyj" column="F_BMZGJLYJ" jdbcType="CLOB"/>
+		<result property="gsjlsp" column="F_GSJLSP" jdbcType="CLOB"/>
+		<result property="bm" column="F_BM" jdbcType="CLOB"/>
+		<result property="fj" column="F_FJ" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+
+	<sql id="columns">
+		ID,F_GSMC,F_SQRQ,F_QJRXM,F_QJRXMID,F_SZBM,F_SZBMID,F_JB,F_QJTS,F_RQQ,F_RQZ,F_BMZGJLYJ,F_GSJLSP,F_BM,F_FJ
+	</sql>
+	<sql id="wfColumns">
+		ID,F_GSMC,F_SQRQ,F_QJRXM,F_QJRXMID,F_SZBM,F_SZBMID,F_JB,F_QJTS,F_RQQ,F_RQZ,F_BMZGJLYJ,F_GSJLSP,F_BM,F_FJ
+	</sql>
+	
+	<sql id="dynamicWhere">
+		<where>
+			<if test="@Ognl@isNotEmpty(gsmc)"> AND F_GSMC  LIKE '%${gsmc}%'  </if>
+			<if test="@Ognl@isNotEmpty(sqrq)"> AND F_SQRQ  =#{sqrq} </if>
+			<if test="@Ognl@isNotEmpty(beginsqrq)"> AND F_SQRQ  >=#{beginsqrq,jdbcType=DATE} </if>
+			<if test="@Ognl@isNotEmpty(endsqrq)"> AND F_SQRQ <![CDATA[ <=#{endsqrq,jdbcType=DATE}]]> </if>
+			<if test="@Ognl@isNotEmpty(qjrxm)"> AND F_QJRXM  LIKE '%${qjrxm}%'  </if>
+			<if test="@Ognl@isNotEmpty(qjrxmID)"> AND F_QJRXMID  LIKE '%${qjrxmID}%'  </if>
+			<if test="@Ognl@isNotEmpty(szbm)"> AND F_SZBM  LIKE '%${szbm}%'  </if>
+			<if test="@Ognl@isNotEmpty(szbmID)"> AND F_SZBMID  LIKE '%${szbmID}%'  </if>
+			<if test="@Ognl@isNotEmpty(jb)"> AND F_JB  LIKE '%${jb}%'  </if>
+			<if test="@Ognl@isNotEmpty(qjts)"> AND F_QJTS  =#{qjts} </if>
+			<if test="@Ognl@isNotEmpty(rqq)"> AND F_RQQ  =#{rqq} </if>
+			<if test="@Ognl@isNotEmpty(beginrqq)"> AND F_RQQ  >=#{beginrqq,jdbcType=DATE} </if>
+			<if test="@Ognl@isNotEmpty(endrqq)"> AND F_RQQ <![CDATA[ <=#{endrqq,jdbcType=DATE}]]> </if>
+			<if test="@Ognl@isNotEmpty(rqz)"> AND F_RQZ  =#{rqz} </if>
+			<if test="@Ognl@isNotEmpty(beginrqz)"> AND F_RQZ  >=#{beginrqz,jdbcType=DATE} </if>
+			<if test="@Ognl@isNotEmpty(endrqz)"> AND F_RQZ <![CDATA[ <=#{endrqz,jdbcType=DATE}]]> </if>
+			<if test="@Ognl@isNotEmpty(bmzgjlyj)"> AND F_BMZGJLYJ  =#{bmzgjlyj} </if>
+			<if test="@Ognl@isNotEmpty(gsjlsp)"> AND F_GSJLSP  =#{gsjlsp} </if>
+			<if test="@Ognl@isNotEmpty(bm)"> AND F_BM  =#{bm} </if>
+			<if test="@Ognl@isNotEmpty(fj)"> AND F_FJ  LIKE '%${fj}%'  </if>
+		</where>
+	</sql>
+
+	<insert id="add" parameterType="com.hotent.qingjiadan.model.jfkjoa.Kjqjd">
+		INSERT INTO W_KJQJD
+		(ID,
+		F_GSMC,F_SQRQ,F_QJRXM,F_QJRXMID,F_SZBM,F_SZBMID,F_JB,F_QJTS,F_RQQ,F_RQZ,F_BMZGJLYJ,F_GSJLSP,F_BM,F_FJ)
+		VALUES
+		(#{id,jdbcType=NUMERIC},
+		#{gsmc,jdbcType=VARCHAR}, #{sqrq,jdbcType=DATE}, #{qjrxm,jdbcType=VARCHAR}, #{qjrxmID,jdbcType=VARCHAR}, #{szbm,jdbcType=VARCHAR}, #{szbmID,jdbcType=VARCHAR}, #{jb,jdbcType=VARCHAR}, #{qjts,jdbcType=NUMERIC}, #{rqq,jdbcType=DATE}, #{rqz,jdbcType=DATE}, #{bmzgjlyj,jdbcType=CLOB}, #{gsjlsp,jdbcType=CLOB}, #{bm,jdbcType=CLOB}, #{fj,jdbcType=VARCHAR})
+	</insert>
+	
+	<delete id="delById" parameterType="java.lang.Long">
+		DELETE FROM W_KJQJD 
+		WHERE
+		ID=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.hotent.qingjiadan.model.jfkjoa.Kjqjd">
+		UPDATE W_KJQJD SET
+		F_GSMC=#{gsmc,jdbcType=VARCHAR},
+		F_SQRQ=#{sqrq,jdbcType=DATE},
+		F_QJRXM=#{qjrxm,jdbcType=VARCHAR},
+		F_QJRXMID=#{qjrxmID,jdbcType=VARCHAR},
+		F_SZBM=#{szbm,jdbcType=VARCHAR},
+		F_SZBMID=#{szbmID,jdbcType=VARCHAR},
+		F_JB=#{jb,jdbcType=VARCHAR},
+		F_QJTS=#{qjts,jdbcType=NUMERIC},
+		F_RQQ=#{rqq,jdbcType=DATE},
+		F_RQZ=#{rqz,jdbcType=DATE},
+		F_BMZGJLYJ=#{bmzgjlyj,jdbcType=CLOB},
+		F_GSJLSP=#{gsjlsp,jdbcType=CLOB},
+		F_BM=#{bm,jdbcType=CLOB},
+		F_FJ=#{fj,jdbcType=VARCHAR}
+		WHERE
+		ID=#{id}
+	</update>
+	
+		    
+	<select id="getById" parameterType="java.lang.Long" resultMap="Kjqjd">
+		SELECT <include refid="columns"/>
+		FROM W_KJQJD
+		WHERE
+		ID=#{id}
+	</select>
+	
+	<select id="getAll" resultMap="Kjqjd">
+		SELECT <include refid="columns"/>
+		FROM W_KJQJD   
+		<include refid="dynamicWhere" />
+		<if test="@Ognl@isNotEmpty(orderField)">
+		order by ${orderField} ${orderSeq}
+		</if>
+		<if test="@Ognl@isEmpty(orderField)">
+		order by ID  desc
+		</if>
+	</select>
+	
+	
+	
+</mapper>

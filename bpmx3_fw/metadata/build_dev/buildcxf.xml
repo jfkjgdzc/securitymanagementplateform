@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<project name="cxf wsdl2java" basedir="../../" default="cxfWSDLToJava">
+	<property name="cxf.home" location="D:\software\java\cxf\apache-cxf-2.7.16" />
+	
+	<property name="target" value="target">
+		</property>
+	
+	<path id="cxf.classpath">
+		<fileset dir="${cxf.home}/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	
+	<path id="refLib">
+			<fileset dir="src/main/webapp/WEB-INF/lib">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+	<target name="cxfWSDLToJava">
+		
+		<java classname="org.apache.cxf.tools.wsdlto.WSDLToJava" fork="true">
+			<arg value="-client" />
+			<arg value="-d" />
+			<arg value="${target}/src" />
+			<arg value="http://192.168.1.102:8080/bpmx3/service/ProcessService?wsdl" />
+			<classpath>
+				<path refid="cxf.classpath" />
+			</classpath>
+		</java>
+		<mkdir dir="${target}/classes" />
+		<javac srcdir="${target}/src" destdir="${target}/classes"  debug="true" optimize="true" encoding="GBK" includeantruntime="on">
+					</javac>
+		
+		<jar update="true" jarfile="${target}/processService.jar">
+				<fileset dir="${target}/classes">
+				</fileset>
+		</jar>
+		
+		<delete dir="${target}/classes"></delete>
+		<delete dir="${target}/src"></delete>
+	</target>
+</project>

@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 生成开发体验版本 -->
+<project name="build_new" basedir="../../" default="中/高级源码项目开发_有开发者限制">
+	<property name="dev.res" value="build/hotent" />
+	<property name="outDir" value="src/main/webapp/WEB-INF/lib" />
+	<property name="devbpmx.dir" value="build/hotent/bpmx" />
+	<property name="doc.list" location="E:\BPMX3文档" />
+	<property name="doc.dir" location="metadata" />
+	<property name="src.dir" location="src/main" />
+	<property name="classes.dir" location="src/main/webapp/WEB-INF/classes" />
+	<property name="dev.lib" location="build/hotent/bpmx/web/WEB-INF/lib" />
+	<property name="dev.classes" location="build/hotent/bpmx/web/WEB-INF/classes" />
+	<property name="compress.dir" location="${devbpmx.dir}/compress" />
+
+	<path id="refPath">
+		<fileset dir="src/main/webapp/WEB-INF/lib" includes="*.jar" />
+		<fileset dir="metadata/refLib" includes="*.jar" />
+	</path>
+
+	<!-- 生成产品key -->
+	<path id="refPath">
+		<fileset dir="src/main/webapp/WEB-INF/lib" includes="*.jar" />
+		<fileset dir="metadata/refLib" includes="*.jar" />
+	</path>
+	<taskdef name="genKey" classname="demo.GenKey">
+		<classpath location="metadata/build_dev/resource/classes" />
+		<classpath location="src/main/webapp/WEB-INF/classes" />
+		<classpath refid="refPath" />
+	</taskdef>
+
+
+
+	<!-- 压缩任务定义 -->
+	<taskdef name="compress" classname="com.yahoo.platform.yui.compressor.YUICompressTask">
+		<classpath>
+			<path refid="refPath" />
+		</classpath>
+	</taskdef>
+	<!-- 压缩JS代码 -->
+	<macrodef name="compressJS">
+		<sequential>
+			<copy todir="${compress.dir}/js/hotent">
+				<fileset dir="${devbpmx.dir}/web/js/hotent">
+				</fileset>
+			</copy>
+			<copy todir="${compress.dir}/js/util">
+				<fileset dir="${devbpmx.dir}/web/js/util" includes="form.js,util.js">
+				</fileset>
+			</copy>
+			<compress linebreak="9000000" warn="false" munge="yes" preserveallsemicolons="true" outputfolder="${devbpmx.dir}/web">
+				<fileset dir="${compress.dir}">
+					<include name="**/*.js" />
+				</fileset>
+			</compress>
+			<delete dir="${compress.dir}">
+			</delete>
+		</sequential>
+	</macrodef>
+
+
+	<!-- 打包授权信息 -->
+	<macrodef name="authorization" description="授权JAR">
+		<sequential>
+			<delete dir="${dev.lib}/authorization.jar">
+			</delete>
+			<echo message="删除已存在的授权jar包,重新授权">
+			</echo>
+			<jar destfile="${dev.lib}/authorization.jar" description="jar hotent package">
+				<fileset dir="${classes.dir}">
+					<include name="com/hotent/core/util/**.class" />
+				</fileset>
+			</jar>
+			<delete dir="${dev.classes}/com/hotent/core/util">
+			</delete>
+			<mkdir dir="${dev.res}/bpmx/resources/com/hotent/core/web/listener" />
+			<copy todir="${dev.res}/bpmx/resources/com/hotent/core/web/listener">
+				<fileset dir="${dev.classes}/com/hotent/core/web/listener">
+					<include name="**" />
+				</fileset>
+			</copy>
+			<copy todir="${dev.res}/bpmx/resources">
+				<fileset dir="${dev.classes}">
+					<include name="*.dll" />
+					<include name="*.so" />
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<!-- 拷贝属性文件app.properties -->
+	<macrodef name="copyAppProperties">
+		<attribute name="path" description="路径" />
+		<sequential>
+			<delete file="@{path}/web/WEB-INF/classes/conf/app.properties">
+			</delete>
+			<copy todir="@{path}/web/WEB-INF/classes/conf">
+				<fileset dir="@{path}/resources/conf">
+					<include name="app.properties" />
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<!-- 文档整理 -->
+	<macrodef name="documents" description="文档整理公共函数">
+		<sequential>
+			<delete dir="${dev.res}/相关文档">
+			</delete>
+			<mkdir dir="${dev.res}/相关文档" />
+			<copy todir="${dev.res}/相关文档/chm">
+				<fileset dir="${doc.dir}/doc/chm">
+					<include name="*.chm" />
+				</fileset>
+			</copy>
+			<copy todir="${dev.res}/相关文档/release">
+				<fileset dir="${doc.dir}/doc/release">
+					<include name="**/**" />
+				</fileset>
+			</copy>
+			<copy todir="${dev.res}/相关文档/第三方控件文档">
+				<fileset dir="${doc.dir}/doc/第三方控件文档">
+					<include name="**/**" />
+				</fileset>
+			</copy>
+			<copy todir="${dev.res}/相关文档/开发">
+				<fileset dir="${doc.dir}/doc/开发">
+					<include name="**/**" />
+				</fileset>
+			</copy>
+			<copy todir="${dev.res}/相关文档/开发指导">
+				<fileset dir="${doc.dir}/doc/release32/开发指导">
+					<include name="BPMX_3.3_数据库字典.doc" />
+					<include name="BPMX3.3开发手册V1.0.docx" />
+					<include name="流程引擎表数据字典.docx" />
+				</fileset>
+			</copy>
+			<copy todir="${dev.res}/相关文档/db/pdm">
+				<fileset dir="${doc.dir}/db/pdm">
+					<include name="*.pdm" />
+				</fileset>
+			</copy>
+			<!-- 数据库脚本 -->
+			<delete dir="${dev.res}/数据库脚本">
+			</delete>
+			<mkdir dir="${dev.res}/数据库脚本" />
+			<copy todir="${dev.res}/数据库脚本/mssql">
+				<fileset dir="metadata/db/scripts/mssql">
+				</fileset>
+			</copy>
+			<copy todir="${dev.res}/数据库脚本/oracle">
+				<fileset dir="metadata/db/scripts/oracle">
+				</fileset>
+			</copy>
+			<copy todir="${dev.res}/数据库脚本/mysql">
+				<fileset dir="metadata/db/scripts/mysql">
+				</fileset>
+			</copy>
+			<delete dir="${dev.res}/系统部署">
+			</delete>
+			<mkdir dir="${dev.res}/系统部署" />
+			<copy todir="${dev.res}/系统部署">
+				<fileset dir="${doc.dir}/doc/release32/部署">
+					<include name="**/**" />
+				</fileset>
+			</copy>
+			<copy todir="${dev.res}/">
+				<fileset dir="${doc.dir}/doc/release32">
+					<include name="BPMX3.3业务流程管理平台操作手册.doc" />
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+
+	<macrodef name="baseFunc" description="开发体验版公共函数">
+		<attribute name="dbType" description="数据库类型" />
+		<sequential>
+			<delete dir="${devbpmx.dir}" />
+			<mkdir dir="${devbpmx.dir}" />
+
+			<copy todir="${devbpmx.dir}/">
+				<fileset dir="metadata/build_dev/">
+					<include name=".classpath" />
+					<include name=".project" />
+				</fileset>
+			</copy>
+
+			<copy todir="${devbpmx.dir}/metadata/codegen">
+				<fileset dir="metadata/codegen">
+				</fileset>
+			</copy>
+
+			<copy todir="${devbpmx.dir}/resources">
+				<fileset dir="src/main/resources">
+				</fileset>
+			</copy>
+
+			<!--生成试用key,修改resources下面的app.properties的productKey-->
+			<genKey formal="0" dbType="@{dbType}" propertiesPath="${basedir}/${devbpmx.dir}/resources/conf/app.properties" />
+
+			<copy todir="${devbpmx.dir}/src/">
+				<fileset dir="src/main/java/">
+					<exclude name="**/ProcessDiagramCanvas.java">
+					</exclude>
+					<exclude name="**/ProcessDiagramGenerator.java">
+					</exclude>
+				</fileset>
+			</copy>
+
+			<copy todir="${devbpmx.dir}/web/">
+				<fileset dir="src/main/webapp">
+					<exclude name="attachFiles/**/**" />
+					<exclude name="emailAttachs/**/**" />
+					<!-- 	<exclude name="**/main_top.jspf"></exclude>  -->
+				</fileset>
+			</copy>
+			<copyEvalFile />
+
+			<!-- 拷贝app.properties文件 -->
+			<copyAppProperties path="${devbpmx.dir}" />
+			<!-- 编译java文件 <recompile /> -->
+			<replace_Ht filepath="${devbpmx.dir}/src" webrootpath="${devbpmx.dir}/web" prev="" prev1="/*/" />
+
+			<!-- jar包 -->
+			<jar_hotent />
+			<!-- 删除源码文件 -->
+			<delete dir="${devbpmx.dir}/src/com">
+			</delete>
+
+			<!--压缩js-->
+			<compressJS />
+			<!--
+				拷贝文档
+				-->
+			<copy todir="${devbpmx.dir}/metadata/doc/">
+				<fileset dir="metadata/doc/release32/PDF" excludes="开发指导/**">
+					<include name="**/**" />
+				</fileset>
+			</copy>
+			<echo message="替换设计器">
+			</echo>
+			<replaceSwf />
+			<replacecodeTemplates />
+		</sequential>
+	</macrodef>
+	<!--替换设计器-->
+	<macrodef name="replaceSwf">
+		<sequential>
+			<delete file="${devbpmx.dir}/web/media/swf/bpm/bpmeditor.swf">
+			</delete>
+			<copy tofile="${devbpmx.dir}/web/media/swf/bpm/bpmeditor.swf">
+				<fileset file="metadata/build_dev/resource/web/swf/bpmeditor.swf">
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<!-- 替换codeTemplates文件 -->
+	<macrodef name="replacecodeTemplates">
+		<sequential>
+			<delete file="${devbpmx.dir}/resources/template/code/codeTemplates.xml">
+			</delete>
+			<delete file="${devbpmx.dir}/web/WEB-INF/classes/template/code/codeTemplates.xml">
+			</delete>
+			<copy tofile="${devbpmx.dir}/resources/template/code/codeTemplates.xml">
+				<fileset file="metadata/build_dev/resource/codeTemplates.xml">
+				</fileset>
+			</copy>
+			<copy tofile="${devbpmx.dir}/web/WEB-INF/classes/template/code/codeTemplates.xml">
+				<fileset file="metadata/build_dev/resource/codeTemplates.xml">
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="copyEvalFile">
+		<sequential>
+			<copy todir="${devbpmx.dir}/src/com/hotent/core/bpm/graph/activiti">
+				<fileset dir="metadata/build_dev/resource/src">
+					<include name="ProcessDiagramCanvas.java">
+					</include>
+					<include name="ProcessDiagramGenerator.java">
+					</include>
+				</fileset>
+			</copy>
+			<copy todir="${devbpmx.dir}/web/WEB-INF">
+				<fileset dir="metadata/build_dev/resource/web/WEB-INF">
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="replace_Ht">
+		<attribute name="filepath" description="数据库类型" />
+		<attribute name="webrootpath" description="数据库类型" />
+		<attribute name="prev" description="数据库类型" />
+		<attribute name="prev1" description="数据库类型" />
+		<sequential>
+			<replace dir="@{filepath}" includesfile="@{filepath}/com/hotent/platform/web/filter/HtDecisionManager.java">
+				<replacefilter token="/*@begin@{prev}" value="/*@begin@{prev1}" />
+				<replacefilter token="@{prev}@end*/" value="@{prev1}@end*/" />
+			</replace>
+			<echo message="-- 打开HtDecisionManager的授权限制 --" />
+			<javac srcdir="@{filepath}" destdir="@{webrootpath}/WEB-INF/classes" classpathref="refPath" includesfile="@{filepath}/com/hotent/platform/web/filter/HtDecisionManager.java" debug="true" optimize="true" encoding="UTF-8" includeantruntime="on">
+			</javac>
+			<echo message="-- 重新编译HtDecisionManager --" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="copyDllToResources" description="复制动态链接库到resources目录下">
+		<sequential>
+			<!-- 复制动态链接库到resources目录下 -->
+			<copy todir="${devbpmx.dir}/resources">
+				<fileset dir="metadata/build_dev/resource" includes="*.dll,*.so">
+				</fileset>
+			</copy>
+			<copy todir="${devbpmx.dir}/src">
+				<fileset dir="metadata/build_dev/resource/src" excludes="*.dll,*.so">
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="updateAct" description="更新activiti-engine-5.15.1.jar">
+		<sequential>
+			<jar update="true" jarfile="${devbpmx.dir}/web/WEB-INF/lib/activiti-engine-5.15.1.jar">
+				<fileset dir="${devbpmx.dir}/web/WEB-INF/classes">
+					<include name="org/activiti/engine/**/*.class" />
+				</fileset>
+			</jar>
+			<jar update="true" jarfile="${devbpmx.dir}/web/WEB-INF/lib/activemq-pool-5.8.0.jar">
+				<fileset dir="${devbpmx.dir}/web/WEB-INF/classes">
+					<include name="org/displaytag/**/*.class" />
+				</fileset>
+			</jar>
+			<jar update="true" jarfile="${devbpmx.dir}/web/WEB-INF/lib/displayTag-1.2.jar">
+				<fileset dir="${devbpmx.dir}/web/WEB-INF/classes">
+					<include name="org/apache/activemq/**/*.class" />
+				</fileset>
+			</jar>
+			<delete dir="${devbpmx.dir}/web/WEB-INF/classes/org">
+			</delete>
+			<delete dir="${devbpmx.dir}/src/org">
+			</delete>
+		</sequential>
+	</macrodef>
+
+	<!-- 开发体验版，jar包com目录，完成后删除com目录。 -->
+	<macrodef name="jar_hotent">
+		<sequential>
+			<jar destfile="${devbpmx.dir}/web/WEB-INF/lib/hotent.jar" description="jar hotent package">
+				<fileset dir="${devbpmx.dir}/web/WEB-INF/classes" includes="com/**/*.class" />
+			</jar>
+			<delete includeEmptyDirs="false" dir="${devbpmx.dir}/web/WEB-INF/classes/com" includes="**/*.class" />
+
+		</sequential>
+	</macrodef>
+
+
+
+	<target name="中/高级源码项目开发_有开发者限制" description="中/高级源码">
+		<delete dir="${devbpmx.dir}" />
+		<mkdir dir="${devbpmx.dir}" />
+		<copy todir="${devbpmx.dir}/">
+			<fileset dir="metadata/build_dev/">
+				<include name=".classpath" />
+				<include name=".project" />
+			</fileset>
+		</copy>
+		<copy todir="${devbpmx.dir}/src">
+			<fileset dir="src/main/java/">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${devbpmx.dir}/resources">
+			<fileset dir="src/main/resources/">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<echo message="正式版，去除产品key">
+		</echo>
+		<!-- formal(正式版/试用版),"1"为正式版 ,"0"为试用版 ; propertiesPath(文件输出地址)  -->
+		<genKey formal="1" propertiesPath="${basedir}/${devbpmx.dir}/resources/conf/app.properties" />
+		<delete dir="${devbpmx.dir}/src/com/hotent/core/web/security">
+		</delete>
+		<delete file="${devbpmx.dir}/src/com/hotent/platform/web/filter/HtDecisionManager.java">
+		</delete>
+		<echo message="替换成正式版文件">
+		</echo>
+		<copy todir="${devbpmx.dir}/src/com/hotent/platform/web/filter/">
+			<fileset dir="metadata/build_dev/resource/src">
+				<include name="HtDecisionManager.java" />
+			</fileset>
+		</copy>
+		<copy todir="${devbpmx.dir}/web/">
+			<fileset dir="src/main/webapp">
+				<exclude name="attachFiles/**/**" />
+				<exclude name="emailAttachs/**/**" />
+			</fileset>
+		</copy>
+		<authorization />
+		<echo message=" 拷贝app.properties文件 " />
+		<copyAppProperties path="${devbpmx.dir}" />
+		<copy todir="${devbpmx.dir}/metadata/codegen">
+			<fileset dir="metadata/codegen">
+				<include name="**/**" />
+			</fileset>
+		</copy>
+		<documents />
+		<zip basedir="${dev.res}" file="build/bpmx_allSrc.zip" encoding="GBK" />
+	</target>
+
+
+
+	<target name="中/高级源码项目开发_无开发者限制" description="中/高级版--无限制">
+		<delete dir="${devbpmx.dir}" />
+		<mkdir dir="${devbpmx.dir}" />
+		<copy todir="${devbpmx.dir}/">
+			<fileset dir="metadata/build_dev/">
+				<include name=".classpath" />
+				<include name=".project" />
+			</fileset>
+		</copy>
+		<copy todir="${devbpmx.dir}/src">
+			<fileset dir="src/main/java/">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${devbpmx.dir}/resources">
+			<fileset dir="src/main/resources/">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<echo message="正式版，去除产品key">
+		</echo>
+		<!-- formal(正式版/试用版),"1"为正式版 ,"0"为试用版 ; propertiesPath(文件输出地址)  -->
+		<genKey formal="1" propertiesPath="${basedir}/${devbpmx.dir}/resources/conf/app.properties" />
+		<delete dir="${devbpmx.dir}/src/com/hotent/core/web/security">
+		</delete>
+		<delete file="${devbpmx.dir}/src/com/hotent/platform/web/filter/HtDecisionManager.java">
+		</delete>
+		<echo message="替换成正式版文件">
+		</echo>
+		<copy todir="${devbpmx.dir}/src/com/hotent/platform/web/filter/">
+			<fileset dir="metadata/build_dev/resource/src">
+				<include name="HtDecisionManager.java" />
+			</fileset>
+		</copy>
+		<copy todir="${devbpmx.dir}/web/">
+			<fileset dir="src/main/webapp">
+				<exclude name="attachFiles/**/**" />
+				<exclude name="emailAttachs/**/**" />
+			</fileset>
+		</copy>
+		<echo message=" 拷贝app.properties文件 " />
+		<copyAppProperties path="${devbpmx.dir}" />
+		<copy todir="${devbpmx.dir}/metadata/codegen">
+			<fileset dir="metadata/codegen">
+				<include name="**/**" />
+			</fileset>
+		</copy>
+		<documents />
+		<delete file="${dev.lib}/authorization.jar">
+		</delete>
+		<zip basedir="${dev.res}" file="build/bpmx_allSrc.zip" encoding="GBK" />
+	</target>
+
+
+	<target name="初级版controler层" description="初级版controler层">
+		<delete dir="${dev.res}" />
+		<mkdir dir="${devbpmx.dir}" />
+		<copy todir="${devbpmx.dir}/">
+			<fileset dir="metadata/build_dev/">
+				<include name=".classpath" />
+				<include name=".project" />
+			</fileset>
+		</copy>
+
+		<copy todir="${devbpmx.dir}/src">
+			<fileset dir="src/main/java/">
+				<!--在这里添加需要开发的源码层-->
+				<include name="com/hotent/platform/controller/**/**" />
+				<include name="com/hotent/platform/model/**/**" />
+				<include name="Ognl.java" />
+			</fileset>
+		</copy>
+
+		<!--设置使用期限-->
+		<echo message="创建临时文件夹，替换为正式版HtDecisionManager.java,重新编译">
+		</echo>
+		<delete dir="${devbpmx.dir}/src/com/hotent/core/web/security">
+		</delete>
+		<delete dir="${devbpmx.dir}/linshi">
+		</delete>
+		<mkdir dir="${devbpmx.dir}/linshi" />
+		<copy todir="${devbpmx.dir}/linshi">
+			<fileset dir="metadata/build_dev/resource/src">
+				<include name="HtDecisionManager.java" />
+			</fileset>
+		</copy>
+		<javac srcdir="${devbpmx.dir}/linshi" destdir="${classes.dir}" classpath="${classes.dir}" classpathref="refPath" debug="true" optimize="true" encoding="UTF-8" includeantruntime="on">
+		</javac>
+		<delete dir="${devbpmx.dir}/linshi">
+		</delete>
+
+		<copy todir="${devbpmx.dir}/resources">
+			<fileset dir="src/main/resources/">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<delete file="${devbpmx.dir}/resources/template/code/codeTemplates.xml">
+		</delete>
+		<delete file="${devbpmx.dir}/web/WEB-INF/classes/template/code/codeTemplates.xml">
+		</delete>
+		<copy tofile="${devbpmx.dir}/resources/template/code/codeTemplates.xml">
+			<fileset file="metadata/build_dev/resource/codeTemplates.xml">
+			</fileset>
+		</copy>
+		<copy tofile="${devbpmx.dir}/web/WEB-INF/classes/template/code/codeTemplates.xml">
+			<fileset file="metadata/build_dev/resource/codeTemplates.xml">
+			</fileset>
+		</copy>
+
+		<genKey formal="1" propertiesPath="${basedir}/${devbpmx.dir}/resources/conf/app.properties" />
+
+		<copy todir="${devbpmx.dir}/web/">
+			<fileset dir="src/main/webapp">
+				<exclude name="attachFiles/**/**" />
+				<exclude name="emailAttachs/**/**" />
+			</fileset>
+		</copy>
+		<!-- 拷贝app.properties文件 -->
+		<copyAppProperties path="${devbpmx.dir}" />
+
+		<copy todir="${devbpmx.dir}/metadata/db">
+			<fileset dir="metadata/db/pdm">
+				<include name="BPMX_3.3_oracle_V3.pdm" />
+			</fileset>
+		</copy>
+
+		<copy todir="${devbpmx.dir}/metadata/db/script/mssql">
+			<fileset dir="metadata/db/scripts/mssql">
+			</fileset>
+		</copy>
+		<copy todir="${devbpmx.dir}/metadata/db/script/oracle">
+			<fileset dir="metadata/db/scripts/oracle">
+			</fileset>
+		</copy>
+		<copy todir="${devbpmx.dir}/metadata/db/script/mysql">
+			<fileset dir="metadata/db/scripts/mysql">
+			</fileset>
+		</copy>
+
+		<copy todir="${devbpmx.dir}/metadata/codegen">
+			<fileset dir="metadata/codegen">
+				<include name="**/**" />
+			</fileset>
+		</copy>
+		<documents />
+		<jar destfile="${devbpmx.dir}/web/WEB-INF/lib/hotent.jar" description="jar hotent package">
+			<fileset dir="${devbpmx.dir}/web/WEB-INF/classes">
+				<include name="com/**/**.class" />
+				<exclude name="com/hotent/platform/controller/**/**.class" />
+				<exclude name="com/hotent/platform/model/**/**.class" />
+			</fileset>
+		</jar>
+		<!--更新activiti-engine-5.15.1.jar-->
+		<updateAct />
+		<delete includeEmptyDirs="false" dir="${devbpmx.dir}/web/WEB-INF/classes/com" includes="**/*.class" />
+		<copyDllToResources />
+		<delete file="${devbpmx.dir}/src/HtDecisionManager.java" />
+		<delete file="${devbpmx.dir}/src/ProcessDiagramCanvas.java" />
+		<delete file="${devbpmx.dir}/src/ProcessDiagramGenerator.java " />
+		<delete file="${dev.lib}/authorization.jar">
+		</delete>
+		<zip basedir="${dev.res}" file="build/bpmx_init.zip" encoding="GBK" />
+	</target>
+
+
+	<target name="OARCLE开发体验版">
+		<baseFunc dbType="oracle" />
+		<updateAct />
+		<copy todir="${devbpmx.dir}/metadata/db">
+			<fileset dir="metadata/db/scripts/oracle">
+			</fileset>
+		</copy>
+		<copyDllToResources />
+		<zip basedir="${devbpmx.dir}" file="build/bpmx_dev_oracle.zip" encoding="GBK" />
+	</target>
+
+	<target name="MYSQL开发体验版" description="mysql开发体验版">
+		<baseFunc dbType="mysql" />
+		<updateAct />
+		<copy todir="${devbpmx.dir}/metadata/db">
+			<fileset dir="metadata/db/scripts/mysql">
+			</fileset>
+		</copy>
+		<copyDllToResources />
+		<zip basedir="${devbpmx.dir}" file="build/bpmx_dev_mysql.zip" encoding="GBK" />
+	</target>
+
+	<target name="生成WAR包" description="生成WAR包">
+		<replace_Ht filepath="${src.dir}/java" webrootpath="src/main/webapp" prev="" prev1="/*/" />
+		<war destfile="build/bpmx3.war" webxml="src/main/webapp/WEB-INF/web.xml" encoding="UTF-8">
+			<fileset dir="src/main/webapp">
+			</fileset>
+		</war>
+		<replace_Ht filepath="${src.dir}/java" webrootpath="src/main/webapp" prev="/*/" prev1="" />
+	</target>
+
+	<target name="测试" description="测试脚本">
+		<replace_Ht filepath="${devbpmx.dir}/src" webrootpath="${devbpmx.dir}/web" prev="" prev1="/*/" />
+	</target>
+</project>
